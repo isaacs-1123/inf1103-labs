@@ -7,14 +7,15 @@ while input_quantity != "quit":
         print("Alert! Total inventory has exceeded 500 units.")
         break 
     else:    
-        input_quantity = input("Please enter a stock quantity: ")
+        input_quantity = input("Please enter a stock quantity or type quit to exit: ")
         if input_quantity == "quit":
             print("The Total Units Processed is", inventory, "and the Number of Failed/Reject Entries is",failed_input)
             input_quantity = "quit"
             
         elif input_quantity.isdigit():
             inventory += int(input_quantity)
+            print("Added", input_quantity, "items to inventory. Total Inventory:",inventory)
             
         else:
-            print("Error, this is not a valid input")
+            print("Error, this is not a valid input.")
             failed_input +=1
