@@ -1,6 +1,7 @@
 inventory = 0
 input_quantity = 0
 failed_input = 0
+tax_rate = 0.1
 
 def get_valid_input():
     user_input = input("Please enter a stock quantity or type quit to exit: ")
@@ -16,6 +17,10 @@ def process_delivery(current_total, new_value):
     new_total = current_total + new_value
     return new_total  
 
+def calculate_tax(amount):
+    tax = amount * tax_rate
+    return tax
+
 while input_quantity != "quit":
     result = get_valid_input()
 
@@ -29,16 +34,11 @@ while input_quantity != "quit":
     else:
         input_quantity = result
         inventory = process_delivery(inventory, result)
+        tax = calculate_tax(result)
+
         if inventory >500:
             print("Alert! Total inventory has exceeded 500 units.")
             break 
 
         else:
-            print("Added", input_quantity, "items to inventory. Total Inventory:",inventory)
-
-
-
-
-    
-
-
+            print("Added", input_quantity, "items to inventory. Delivery tax:",tax,"Total Inventory:",inventory)
