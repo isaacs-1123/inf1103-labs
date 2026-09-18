@@ -12,6 +12,10 @@ def get_valid_input():
         print("Error, this is not a valid input.")
         return None
 
+def process_delivery(current_total, new_value):
+    new_total = current_total + new_value
+    return new_total  
+
 while input_quantity != "quit":
     result = get_valid_input()
 
@@ -24,7 +28,7 @@ while input_quantity != "quit":
 
     else:
         input_quantity = result
-        inventory = inventory + result
+        inventory = process_delivery(inventory, result)
         if inventory >500:
             print("Alert! Total inventory has exceeded 500 units.")
             break 
