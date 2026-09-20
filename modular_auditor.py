@@ -1,7 +1,6 @@
-inventory = 0
-input_quantity = 0
-failed_input = 0
+#global constant
 tax_rate = 0.1
+max_capacity = 500
 
 def get_valid_input():
     user_input = input("Please enter a stock quantity or type quit to exit: ")
@@ -21,24 +20,38 @@ def calculate_tax(amount):
     tax = amount * tax_rate
     return tax
 
-while input_quantity != "quit":
-    result = get_valid_input()
+def generate_report(total_units, failed_attempts):
+    print(f"The Total Units Processed is {total_units} and the Number of Failed/Reject Entries is {failed_attempts}")
 
-    if result == "quit":  
-        print("The Total Units Processed is", inventory, "and the Number of Failed/Reject Entries is",failed_input) 
-        input_quantity = "quit"
+def main():
 
-    elif result is None:
-        failed_input += 1
+    inventory = 0
+    failed_input = 0 
+    exit_program = False
 
-    else:
-        input_quantity = result
-        inventory = process_delivery(inventory, result)
-        tax = calculate_tax(result)
+    while not exit_program:
+        
+        result = get_valid_input()
 
-        if inventory >500:
-            print("Alert! Total inventory has exceeded 500 units.")
-            break 
+        if result == "quit":  
+            exit_program = True
 
-        else:
-            print("Added", input_quantity, "items to inventory. Delivery tax:",tax,"Total Inventory:",inventory)
+        elif result is None:
+            failed_input += 1
+
+        else:   
+            
+            if inventory + result > max_capacity:
+                print(f"Alert! Total inventory has exceeded {max_capacity} units.")
+                exit_program = True
+                
+
+            else:
+                inventory = process_delivery(inventory, result)
+                tax = calculate_tax(result)
+                print(f"Added {result} items to inventory. Delivery tax: {tax} Total Inventory: {inventory}")
+
+    generate_report(inventory, failed_input)
+
+if __name__ == "__main__":
+    main()
