@@ -8,6 +8,16 @@ def get_valid_input():
         return "quit"
     elif user_input.isdigit():
         return int(user_input)
+    elif user_input.startswith("-"):
+        print("Error, this is not a valid input. Please enter a non-negative stock quantity.")
+        return None
+    elif user_input.count(".") == 1 and user_input.replace(".", "", 1).isdigit():
+        val = float(user_input)
+        if val.is_integer():
+            return int(val)
+        else:
+            print("Error, this is not a valid input.")
+            return None
     else:
         print("Error, this is not a valid input.")
         return None
@@ -49,7 +59,7 @@ def main():
             else:
                 inventory = process_delivery(inventory, result)
                 tax = calculate_tax(result)
-                print(f"Added {result} items to inventory. Delivery tax: {tax} Total Inventory: {inventory}")
+                print(f"Added {result} items to inventory. Delivery tax: {tax:.2f} Total Inventory: {inventory}")
 
     generate_report(inventory, failed_input)
 
