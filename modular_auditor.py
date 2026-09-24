@@ -11,13 +11,6 @@ def get_valid_input():
     elif user_input.startswith("-"):
         print("Error, this is not a valid input. Please enter a non-negative stock quantity.")
         return None
-    elif user_input.count(".") == 1 and user_input.replace(".", "", 1).isdigit():
-        val = float(user_input)
-        if val.is_integer():
-            return int(val)
-        else:
-            print("Error, this is not a valid input.")
-            return None
     else:
         print("Error, this is not a valid input.")
         return None
