@@ -2,7 +2,7 @@
 EXIT_SIGNAL = -99
 MAX_CAPACITY = 500
 TAX_RATE = 0.1
-INVENTORY_FILE = "inventory.txt"
+INVENTORY_FILE = "inventory.txt"  
 
 ITEM_FIELDS = {
     "id": 0,
@@ -68,6 +68,12 @@ def display_status(item, valid_quantity, tax_amount):
     return None
 
 
+def generate_report(inventory, failed_entries):
+    total_units = sum(item[ITEM_FIELDS["quantity"]] for item in inventory)
+    print(f"\nThe Total Units in inventory is {total_units} and the Number of Failed/Reject Entries is {failed_entries}")
+    return None
+
+
 def load_inventory():
     inventory = []
     try:
@@ -97,6 +103,19 @@ def load_inventory():
         inventory = [item1, item2, item3]
 
     return inventory
+
+
+def save_inventory(inventory):
+    with open(INVENTORY_FILE, "w") as file:
+        for item in inventory:
+            item_id = item[ITEM_FIELDS["id"]]
+            name = item[ITEM_FIELDS["name"]]
+            quantity = item[ITEM_FIELDS["quantity"]]
+            history_list = item[ITEM_FIELDS["transaction_history"]]
+            
+            history_str = HISTORY_SEPARATOR.join(str(h) for h in history_list)
+            file.write(f"{item_id}{FIELD_SEPARATOR}{name}{FIELD_SEPARATOR}{quantity}{FIELD_SEPARATOR}{history_str}\n")
+    return None
 
 
 def main():
@@ -139,6 +158,10 @@ def main():
                 process_delivery(selected_item, quantity_result)
                 tax = calculate_tax(quantity_result, TAX_RATE)
                 display_status(selected_item, quantity_result, tax)
+
+    save_inventory(inventory)
+    print("Transactions has been successfully saved to inventory.txt")
+    generate_report(inventory, failed_entries)
 
 
 if __name__ == "__main__":
