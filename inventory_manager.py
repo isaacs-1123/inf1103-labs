@@ -51,10 +51,12 @@ def update_stock(inventory, product_id, new_stock):
 
 def display_all(inventory):
     print("\nCurrent Inventory")  
+    print("-" * 40)  
     for item in inventory:  
         print(
             f"ID: {item['id']} | Name: {item['name']} | Price: ${item['price']:.2f} | Stock: {item['stock']}"
         )  
+    print("-" * 40)  
 
 
 def main():
@@ -67,42 +69,40 @@ def main():
 
     inventory = load_inventory()
 
+    print("\n----------- MENU -----------")
+    print("1. Display All Products")
+    print("2. Add Product")
+    print("3. Update Stock")
+    print("4. Search Product")
+    print("5. Save Inventory")
+    print("6. Exit")
+    print("----------------------------")
+
     if not inventory:
         add_product(inventory, "P001", "Laptop", 1200.00, 15) 
         add_product(inventory, "P002", "Mouse", 25.50, 40)  
         add_product(inventory, "P003", "Keyboard", 45.00, 25)  
 
     while not exit_program:
-        print("\n----------- MENU -----------")
-        print("1. Display All Products")
-        print("2. Add Product")
-        print("3. Update Stock")
-        print("4. Search Product")
-        print("5. Save Inventory")
-        print("6. Exit")
-        print("----------------------------")
-
-        choice = input("Enter option: ")
+        choice = input("\nEnter menu option: ")
         if choice == "1":
-            display_all(inventory)  
+            display_all(inventory) 
 
         elif choice == "2":
             print("\nAdd New Product") 
             product_id_input = input("Product ID: ") 
             if search_product(inventory, product_id_input): 
-                print(
-                    "Error: Product ID already exists. Use Update Stock instead."
-                )
+                print("\nError: Product ID already exists. Use Update Stock instead.")
                 continue
             name = input("Product Name: ")
             try:
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: ")) 
             except ValueError:
-                print("Invalid input! Price must be a float and stock an int.")
+                print("\nInvalid input! Price must be a float and stock an int.")
                 continue
             if add_product(inventory, product_id_input, name, price, stock): 
-                print("Product added successfully!") 
+                print("\nProduct added successfully!") 
 
         elif choice == "3":
             print("\nUpdate Stock") 
@@ -117,9 +117,9 @@ def main():
                     update_stock(inventory, product_id_input, new_stock)  
                     print("\nStock updated successfully!") 
                 except ValueError:
-                    print("Invalid input!")
+                    print("\nInvalid input!")
             else:
-                print("Product not found.") 
+                print("\nProduct not found.") 
 
         elif choice == "4":
             print("\nSearch Product") 
