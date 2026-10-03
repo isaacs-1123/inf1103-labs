@@ -1,5 +1,4 @@
 import json
-import time
 INVENTORY_FILE = "inventory.json"  
 
 def load_inventory():
@@ -74,7 +73,6 @@ def main():
         add_product(inventory, "P003", "Keyboard", 45.00, 25)  
 
     while not exit_program:
-        time.sleep(2) #Added this to ensure menu doesn't print immediately after the stock output
         print("\n----------- MENU -----------")
         print("1. Display All Products")
         print("2. Add Product")
