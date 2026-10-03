@@ -1,7 +1,6 @@
 import json
+import time
 INVENTORY_FILE = "inventory.json"  
-
-
 
 def load_inventory():
     try:
@@ -18,6 +17,11 @@ def load_inventory():
         )
         return []
 
+
+def save_inventory(inventory):
+    with open(INVENTORY_FILE, "w") as file:  
+        json.dump(inventory, file, indent=4)  
+        print(f"Inventory saved successfully to {INVENTORY_FILE}.")
 
 def search_product(inventory, product_id):
     for product in inventory: 
@@ -39,6 +43,12 @@ def add_product(inventory, product_id, name, price, stock):
     inventory.append(new_product)  
     return True  
 
+def update_stock(inventory, product_id, new_stock):
+    product = search_product(inventory, product_id) 
+    if product:
+        product["stock"] = int(new_stock) 
+        return True 
+    return False
 
 def display_all(inventory):
     print("\nCurrent Inventory")  
@@ -63,7 +73,84 @@ def main():
         add_product(inventory, "P002", "Mouse", 25.50, 40)  
         add_product(inventory, "P003", "Keyboard", 45.00, 25)  
 
-    display_all(inventory)  
+    while not exit_program:
+        time.sleep(2) #Added this to ensure menu doesn't print immediately after the stock output
+        print("\n----------- MENU -----------")
+        print("1. Display All Products")
+        print("2. Add Product")
+        print("3. Update Stock")
+        print("4. Search Product")
+        print("5. Save Inventory")
+        print("6. Exit")
+        print("----------------------------")
+
+        choice = input("Enter option: ")
+        if choice == "1":
+            display_all(inventory)  
+
+        elif choice == "2":
+            print("\nAdd New Product") 
+            product_id_input = input("Product ID: ") 
+            if search_product(inventory, product_id_input): 
+                print(
+                    "Error: Product ID already exists. Use Update Stock instead."
+                )
+                continue
+            name = input("Product Name: ")
+            try:
+                price = float(input("Price: "))
+                stock = int(input("Stock Quantity: ")) 
+            except ValueError:
+                print("Invalid input! Price must be a float and stock an int.")
+                continue
+            if add_product(inventory, product_id_input, name, price, stock): 
+                print("Product added successfully!") 
+
+        elif choice == "3":
+            print("\nUpdate Stock") 
+            product_id_input = input("Enter Product ID: ")
+            product = search_product(inventory, product_id_input) 
+            if product:
+                print("\nProduct Found:") 
+                print(f"Name: {product['name']}") 
+                print(f"Current Stock: {product['stock']}") 
+                try:
+                    new_stock = int(input("\nNew Stock Quantity: ")) 
+                    update_stock(inventory, product_id_input, new_stock)  
+                    print("\nStock updated successfully!") 
+                except ValueError:
+                    print("Invalid input!")
+            else:
+                print("Product not found.") 
+
+        elif choice == "4":
+            print("\nSearch Product") 
+            product_id_input = input("Enter Product ID: ")
+            product = search_product(inventory, product_id_input)  
+            if product:
+                print("\nProduct Found")  
+                print("-" * 40)  
+                print(f"ID: {product['id']}")  
+                print(f"Name: {product['name']}")  
+                print(f"Price: ${product['price']:.2f}")  
+                print(f"Stock: {product['stock']}")  
+                print("-" * 40) 
+            else:
+                print("\nProduct not found.")  
+
+        elif choice == "5":
+            print("\nSaving inventory...")  
+            save_inventory(inventory)  
+
+        elif choice == "6":
+            print("\nSaving inventory before exit...")  
+            save_inventory(inventory)  
+            print("\nThank you for using Inventory Management System.")  
+            print("Program terminated.") 
+            exit_program = True 
+
+        else:
+            print("Invalid option!")
 
 
 if __name__ == "__main__":
