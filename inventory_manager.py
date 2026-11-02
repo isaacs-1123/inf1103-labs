@@ -1,5 +1,5 @@
 from product import Product
-from inventory import Inventory_class
+from inventory import Inventory
 from FileHandling import load_inventory, save_inventory
 
 def main():
@@ -7,7 +7,7 @@ def main():
     print("INVENTORY MANAGEMENT SYSTEM")
     print("=" * 40)
 
-    inventory = Inventory_class()
+    inventory = Inventory()
     
     records = load_inventory()
     inventory.load_records(records)

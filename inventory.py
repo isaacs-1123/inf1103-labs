@@ -1,6 +1,6 @@
 from product import Product
 
-class Inventory_class:
+class Inventory:
     def __init__(self):
         self._products = {}
 
