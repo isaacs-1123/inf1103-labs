@@ -1,4 +1,6 @@
-class Product:
+from abc import ABC, abstractmethod
+
+class Product(ABC):
     def __init__(self, product_id, name, price, stock):
         self.__product_id = product_id
         self.__name = name
@@ -21,5 +23,13 @@ class Product:
         if quantity >= 0:
             self.__stock = quantity
 
-    def copy(self):
-        return Product(self.__product_id, self.__name, self.__price, self.__stock)
+    def display_information(self):
+        print(f"ID: {self.__product_id} | Name: {self.__name} | Price: ${self.__price:.2f} | Stock: {self.__stock}", end="")
+
+    @abstractmethod
+    def get_fulfilment_info(self) -> str:
+        """Return delivery/fulfilment information for this product type."""
+        pass
+
+    # def copy(self):
+    #     return self.__class__(self.__product_id, self.__name, self.__price, self.__stock)
