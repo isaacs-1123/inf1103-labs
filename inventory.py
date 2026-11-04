@@ -1,4 +1,5 @@
-from product import Product
+from physical_product import PhysicalProduct
+from digital_product import DigitalProduct
 
 class Inventory:
     def __init__(self):
@@ -24,15 +25,26 @@ class Inventory:
     def to_record(self):
         records = []
         for product in self._products.values():
-            records.append({
+            base_data = {
                 "id": product.get_product_id(),
                 "name": product.get_name(),
                 "price": product.get_price(),
                 "stock": product.get_stock()
-            })
+            }
+            if isinstance(product, PhysicalProduct):
+                base_data["type"] = "physical"
+                base_data["weight"] = product.get_weight()
+            elif isinstance(product, DigitalProduct):
+                base_data["type"] = "digital"
+                base_data["download_size"] = product.get_download_size()
+            
+            records.append(base_data)
         return records
 
     def load_records(self, records):
         for item in records:
-            product = Product(item["id"], item["name"], item["price"], item["stock"])
+            if item.get("type") == "digital":
+                product = DigitalProduct(item["id"], item["name"], item["price"], item["stock"], item.get("download_size", 0.0))
+            else:
+                product = PhysicalProduct(item["id"], item["name"], item["price"], item["stock"], item.get("weight", 0.0))
             self.add_product(product)
