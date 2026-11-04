@@ -1,6 +1,8 @@
-from product import Product
+from physical_product import PhysicalProduct
+from digital_product import DigitalProduct
 from inventory import Inventory
 from FileHandling import load_inventory, save_inventory
+from can_be_shipped import CanBeShipped
 
 def main():
     print("=" * 40)
@@ -33,13 +35,31 @@ def main():
         
         if choice == "1":
             print("\nCurrent Inventory")
-            print("-" * 40)
-            for product in inventory.get_all_products():
-                print(f"ID: {product.get_product_id()} | Name: {product.get_name()} | Price: ${product.get_price():.2f} | Stock: {product.get_stock()}")
-            print("-" * 40)
+            print("-" * 80)
+
+            products = inventory.get_all_products()
+
+            for i, product in enumerate(products):
+                product.display_information()
+                print(f"   -> Info: {product.get_fulfilment_info()}")
+                if isinstance(product, CanBeShipped):
+                    print(f"   -> Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+
+                if i < len(products) - 1:
+                    print("")
+
+            print("-" * 80)
 
         elif choice == "2":
             print("\nAdd New Product")
+            print("1. Physical Product")
+            print("2. Digital Product")
+            product_type = input("Select product type (1 or 2): ")
+            
+            if product_type not in ["1", "2"]:
+                print("Invalid type selected.")
+                continue
+
             product_id_input = input("Product ID: ")
             
             if inventory.search_product(product_id_input):
@@ -51,11 +71,17 @@ def main():
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: "))
                 
-                new_product = Product(product_id_input, name, price, stock)
+                if product_type == "1":
+                    weight = float(input("Weight (kg): "))
+                    new_product = PhysicalProduct(product_id_input, name, price, stock, weight)
+                else:
+                    size = float(input("Download Size (MB): "))
+                    new_product = DigitalProduct(product_id_input, name, price, stock, size)
+                
                 if inventory.add_product(new_product):
                     print("\nProduct added successfully!")
             except ValueError:
-                print("\nInvalid input! Price must be a float and stock an int.")
+                print("\nInvalid input! Ensure numeric fields are typed correctly.")
 
         elif choice == "3":
             print("\nUpdate Stock")
@@ -64,7 +90,7 @@ def main():
             product = inventory.search_product(product_id_input)
             if product:
                 print("\nProduct Found:")
-                print(f"ID: {product.get_product_id()} | Name: {product.get_name()} | Price: ${product.get_price():.2f} | Stock: {product.get_stock()}")
+                product.display_information()
                 try:
                     new_stock = int(input("\nNew Stock Quantity: "))
                     inventory.update_stock(product_id_input, new_stock)
@@ -82,7 +108,7 @@ def main():
             if product:
                 print("\nProduct Found")
                 print("-" * 40)
-                print(f"ID: {product.get_product_id()} | Name: {product.get_name()} | Price: ${product.get_price():.2f} | Stock: {product.get_stock()}")
+                product.display_information()
                 print("-" * 40)
             else:
                 print("\nProduct not found.")
