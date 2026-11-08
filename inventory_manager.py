@@ -3,8 +3,9 @@ from digital_product import DigitalProduct
 from inventory import Inventory
 from FileHandling import load_inventory, save_inventory
 from can_be_shipped import CanBeShipped
+from supplier import Supplier
 
-def main():
+def main() -> None:
     print("=" * 40)
     print("INVENTORY MANAGEMENT SYSTEM")
     print("=" * 40)
@@ -15,9 +16,11 @@ def main():
     inventory.load_records(records)
 
     if not inventory.get_all_products():
-        inventory.add_product(Product("P001", "Laptop", 1200.00, 15))
-        inventory.add_product(Product("P002", "Mouse", 25.50, 40))
-        inventory.add_product(Product("P003", "Keyboard", 45.00, 25))
+        # Must create a supplier first, and use PhysicalProduct instead of abstract Product
+        default_supp = Supplier("S000", "Default Supply", "contact@default.com")
+        inventory.add_product(PhysicalProduct("P001", "Laptop", 1200.00, 15, 2.5, default_supp))
+        inventory.add_product(PhysicalProduct("P002", "Mouse", 25.50, 40, 0.2, default_supp))
+        inventory.add_product(PhysicalProduct("P003", "Keyboard", 45.00, 25, 0.8, default_supp))
 
     exit_program = False
     
@@ -41,7 +44,9 @@ def main():
 
             for i, product in enumerate(products):
                 product.display_information()
-                print(f"   -> Info: {product.get_fulfilment_info()}")
+                print(f"\n   -> Info: {product.get_fulfilment_info()}")
+                print(f"   -> Supplier: {product.get_supplier().get_name()} ({product.get_supplier().get_contact_email()})")
+                
                 if isinstance(product, CanBeShipped):
                     print(f"   -> Shipping Cost: ${product.calculate_shipping_cost():.2f}")
 
@@ -62,7 +67,7 @@ def main():
 
             product_id_input = input("Product ID: ")
             
-            if inventory.search_product(product_id_input):
+            if inventory.find_product(product_id_input):
                 print("\nError: Product ID already exists. Use Update Stock instead.")
                 continue
                 
@@ -71,15 +76,21 @@ def main():
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: "))
                 
+                print("\n-- Supplier Details --")
+                s_id = input("Supplier ID: ")
+                s_name = input("Supplier Name: ")
+                s_email = input("Supplier Email: ")
+                new_supplier = Supplier(s_id, s_name, s_email)
+                
                 if product_type == "1":
                     weight = float(input("Weight (kg): "))
-                    new_product = PhysicalProduct(product_id_input, name, price, stock, weight)
+                    new_product = PhysicalProduct(product_id_input, name, price, stock, weight, new_supplier)
                 else:
                     size = float(input("Download Size (MB): "))
-                    new_product = DigitalProduct(product_id_input, name, price, stock, size)
+                    new_product = DigitalProduct(product_id_input, name, price, stock, size, new_supplier)
                 
-                if inventory.add_product(new_product):
-                    print("\nProduct added successfully!")
+                inventory.add_product(new_product)
+                print("\nProduct added successfully!")
             except ValueError:
                 print("\nInvalid input! Ensure numeric fields are typed correctly.")
 
@@ -87,7 +98,7 @@ def main():
             print("\nUpdate Stock")
             product_id_input = input("Enter Product ID: ")
             
-            product = inventory.search_product(product_id_input)
+            product = inventory.find_product(product_id_input)
             if product:
                 print("\nProduct Found:")
                 product.display_information()
@@ -104,11 +115,15 @@ def main():
             print("\nSearch Product")
             product_id_input = input("Enter Product ID: ")
             
-            product = inventory.search_product(product_id_input)
+            product = inventory.find_product(product_id_input)
             if product:
                 print("\nProduct Found")
                 print("-" * 40)
                 product.display_information()
+                
+                print("\nSupplier Details:")
+                product.get_supplier().display_information()
+                
                 print("-" * 40)
             else:
                 print("\nProduct not found.")
