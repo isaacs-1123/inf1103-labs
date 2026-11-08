@@ -52,5 +52,20 @@ def run_predict_tests():
           line_from_o1.get_product() is line_from_o2.get_product())
     print("Result: 2 OrderLines exist, but only 1 Product exists!\n")
 
+    # --- TEST 4: POLYMORPHISM ---
+    print("\nTEST 4: POLYMORPHISM")
+    print("Prediction: What will each product print for get_fulfilment_info()?")
+    test_inventory = Inventory()
+    test_inventory.add_product(mouse)     
+    test_inventory.add_product(software)  
+    
+    for product in test_inventory.products:
+
+        mod_name = product.__module__
+        cls_name = product.__class__.__name__
+        
+        print(f" -> Call on [{mod_name}.{cls_name}] '{product.get_name()}':")
+        print(f"    Result: {product.get_fulfilment_info()}")
+        
 if __name__ == "__main__":
     run_predict_tests()
