@@ -16,8 +16,7 @@ def main() -> None:
     inventory.load_records(records)
 
     if not inventory.get_all_products():
-        # Must create a supplier first, and use PhysicalProduct instead of abstract Product
-        default_supp = Supplier("S000", "Default Supply", "contact@default.com")
+        default_supp = Supplier("S001", "Default Electronics", "electronicsales@default.com")
         inventory.add_product(PhysicalProduct("P001", "Laptop", 1200.00, 15, 2.5, default_supp))
         inventory.add_product(PhysicalProduct("P002", "Mouse", 25.50, 40, 0.2, default_supp))
         inventory.add_product(PhysicalProduct("P003", "Keyboard", 45.00, 25, 0.8, default_supp))
@@ -76,18 +75,22 @@ def main() -> None:
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: "))
                 
+                if product_type == "1":
+                    weight = float(input("Weight (kg): "))
+                else:
+                    size = float(input("Download Size (MB): "))
+
                 print("\n-- Supplier Details --")
                 s_id = input("Supplier ID: ")
                 s_name = input("Supplier Name: ")
                 s_email = input("Supplier Email: ")
                 new_supplier = Supplier(s_id, s_name, s_email)
-                
-                if product_type == "1":
-                    weight = float(input("Weight (kg): "))
+
+                if product_type == "1":             
                     new_product = PhysicalProduct(product_id_input, name, price, stock, weight, new_supplier)
                 else:
-                    size = float(input("Download Size (MB): "))
                     new_product = DigitalProduct(product_id_input, name, price, stock, size, new_supplier)
+                
                 
                 inventory.add_product(new_product)
                 print("\nProduct added successfully!")
