@@ -6,6 +6,7 @@ from product_factory import ProductFactory
 
 INVENTORY_FILE = "inventory.json"
 
+
 def load_inventory() -> list[dict]:
     try:
         with open(INVENTORY_FILE, "r", encoding="utf-8") as file:
@@ -13,12 +14,14 @@ def load_inventory() -> list[dict]:
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
+
 def save_inventory(data: list[dict]) -> None:
     try:
         with open(INVENTORY_FILE, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4)
     except OSError as e:
         print(f"Error saving inventory: {e}")
+
 
 def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
     try:
