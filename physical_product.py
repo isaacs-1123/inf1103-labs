@@ -3,15 +3,14 @@ from can_be_shipped import CanBeShipped
 from supplier import Supplier
 
 class PhysicalProduct(Product, CanBeShipped):
-    # Notice the supplier parameter added at the end here!
-    def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float, supplier: Supplier) -> None:
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, weight: float = 0.0) -> None:
         super().__init__(product_id, name, price, stock, supplier)
         self.__weight: float = weight
 
     def get_weight(self) -> float:
         return self.__weight
 
-    def display_information(self):
+    def display_information(self) -> None:
         super().display_information()
         print(f" | Weight: {self.__weight}kg")
 

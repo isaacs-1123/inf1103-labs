@@ -1,8 +1,10 @@
+import inventory
 from physical_product import PhysicalProduct
 from digital_product import DigitalProduct
 from inventory import Inventory
 from FileHandling import load_inventory, save_inventory
 from can_be_shipped import CanBeShipped
+from product_factory import ProductFactory
 from supplier import Supplier
 
 def main() -> None:
@@ -17,9 +19,9 @@ def main() -> None:
 
     if not inventory.get_all_products():
         default_supp = Supplier("S001", "Default Electronics", "electronicsales@default.com")
-        inventory.add_product(PhysicalProduct("P001", "Laptop", 1200.00, 15, 2.5, default_supp))
-        inventory.add_product(PhysicalProduct("P002", "Mouse", 25.50, 40, 0.2, default_supp))
-        inventory.add_product(PhysicalProduct("P003", "Keyboard", 45.00, 25, 0.8, default_supp))
+        inventory.add_product(ProductFactory.create("physical", "P001", "Laptop", 1200.00, 15, default_supp, extra=2.5))
+        inventory.add_product(ProductFactory.create("physical", "P002", "Mouse", 25.50, 40, default_supp, extra=0.2))
+        inventory.add_product(ProductFactory.create("physical", "P003", "Keyboard", 45.00, 25, default_supp, extra=0.8))
 
     exit_program = False
     
@@ -60,43 +62,25 @@ def main() -> None:
             print("2. Digital Product")
             product_type = input("Select product type (1 or 2): ")
             
-            if product_type not in ["1", "2"]:
-                print("Invalid type selected.")
-                continue
+            if product_type == "1":
+                p_type = "physical"
+                extra = float(input("Weight (kg): "))
+            else:
+                p_type = "digital"
+                extra = float(input("Download Size (MB): "))
 
-            product_id_input = input("Product ID: ")
+            print("\n-- Supplier Details --")
+            s_id = input("Supplier ID: ")
+            s_name = input("Supplier Name: ")
+            s_email = input("Supplier Email: ")
+            new_supplier = Supplier(s_id, s_name, s_email)
+
+            new_product = ProductFactory.create(
+                p_type, product_id_input, name, price, stock, new_supplier, extra=extra
+            )
+            inventory.add_product(new_product)
+            print("\nProduct added successfully!")
             
-            if inventory.find_product(product_id_input):
-                print("\nError: Product ID already exists. Use Update Stock instead.")
-                continue
-                
-            name = input("Product Name: ")
-            try:
-                price = float(input("Price: "))
-                stock = int(input("Stock Quantity: "))
-                
-                if product_type == "1":
-                    weight = float(input("Weight (kg): "))
-                else:
-                    size = float(input("Download Size (MB): "))
-
-                print("\n-- Supplier Details --")
-                s_id = input("Supplier ID: ")
-                s_name = input("Supplier Name: ")
-                s_email = input("Supplier Email: ")
-                new_supplier = Supplier(s_id, s_name, s_email)
-
-                if product_type == "1":             
-                    new_product = PhysicalProduct(product_id_input, name, price, stock, weight, new_supplier)
-                else:
-                    new_product = DigitalProduct(product_id_input, name, price, stock, size, new_supplier)
-                
-                
-                inventory.add_product(new_product)
-                print("\nProduct added successfully!")
-            except ValueError:
-                print("\nInvalid input! Ensure numeric fields are typed correctly.")
-
         elif choice == "3":
             print("\nUpdate Stock")
             product_id_input = input("Enter Product ID: ")
